@@ -13,6 +13,16 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: `@kentico/gatsby-source-kontent`,
+      options: {
+        projectId: `6b0fa47f-efbd-0269-ca9c-c7d92439bfbb`, // Fill in your Project ID
+        // Please note that with the Sample Project generated above, `en-US` is the default language for the project and this config. For a blank project, this needs to be `default`.
+        languageCodenames: [
+          `default`, // Or the languages in your project (Project settings -> Localization)
+        ],
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/blog`,

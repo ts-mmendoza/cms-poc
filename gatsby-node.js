@@ -11,16 +11,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const result = await graphql(
     `
       {
-        allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: DESC }
-          limit: 1000
-        ) {
+        allKontentItemBlogPost {
           nodes {
-            fields {
-              slug
-            }
-            frontmatter {
-              title
+            elements {
+              title {
+                value
+              }
+              slug {
+                value
+              }
             }
           }
         }
@@ -33,7 +32,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
+  const posts = result.data.allKontentItemBlogPost.nodes
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -45,10 +44,10 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       const next = index === 0 ? null : posts[index - 1]
 
       createPage({
-        path: post.fields.slug,
+        path: post.elements.slug.value,
         component: blogPost,
         context: {
-          slug: post.fields.slug,
+          slug: post.elements.slug.value,
           previous,
           next,
         },

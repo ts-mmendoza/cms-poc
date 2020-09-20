@@ -8,7 +8,9 @@ import { rhythm } from "../utils/typography"
 
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
+  //const posts = data.allMarkdownRemark.nodes
+  const posts = data.allKontentItemBlogPost.nodes
+
 
   if (posts.length === 0) {
     return (
@@ -25,10 +27,10 @@ const BlogIndex = ({ data, location }) => {
       <SEO title="All posts" />
       <Bio />
       {posts.map((post) => {
-        const title = post.frontmatter.title || post.fields.slug
+        const title = post.elements.title.value // post.frontmatter.title || post.fields.slug
         return (
           <article
-            key={post.fields.slug}
+            key={post.elements.slug.value}
             itemScope
             itemType="http://schema.org/Article"
           >
@@ -40,18 +42,18 @@ const BlogIndex = ({ data, location }) => {
               >
                 <Link
                   style={{ boxShadow: `none` }}
-                  to={post.fields.slug}
+                  to={post.elements.slug.value}
                   itemProp="url"
                 >
                   <span itemProp="headline">{title}</span>
                 </Link>
               </h3>
-              <small>{post.frontmatter.date}</small>
+              <small>{post.elements.published_date.value}</small>
             </header>
             <section>
               <p
                 dangerouslySetInnerHTML={{
-                  __html: post.frontmatter.description || post.excerpt,
+                  __html: post.elements.description.value,
                 }}
                 itemProp="description"
               />
@@ -72,16 +74,21 @@ export const pageQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+    allKontentItemBlogPost(sort: {fields: elements___published_date___value, order: DESC}) {
       nodes {
-        excerpt
-        fields {
-          slug
-        }
-        frontmatter {
-          date(formatString: "MMMM DD, YYYY")
-          title
-          description
+        elements {
+          title {
+            value
+          }
+          slug {
+            value
+          }
+          published_date {
+            value
+          }
+          description {
+            value
+          }
         }
       }
     }
