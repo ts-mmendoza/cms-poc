@@ -4,13 +4,16 @@ import { Link, graphql } from "gatsby"
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import Feature from "../components/features"
 import { rhythm } from "../utils/typography"
 
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   //const posts = data.allMarkdownRemark.nodes
   const posts = data.allKontentItemBlogPost.nodes
+  const featuredItems = data.allKontentItemBreakfast.nodes
 
+  console.log("Featured Items", featuredItems)
 
   if (posts.length === 0) {
     return (
@@ -25,7 +28,16 @@ const BlogIndex = ({ data, location }) => {
   return (
     <Layout location={location} title={siteTitle}>
       <SEO title="All posts" />
-      <Bio />
+      {/* <Bio /> */}
+      <div>
+        <h5>Featured items</h5>
+        {featuredItems.map((item) => {
+          return (
+            <Feature feature={item}/>
+          )
+        })
+      }
+      </div>
       {posts.map((post) => {
         const title = post.elements.title.value // post.frontmatter.title || post.fields.slug
         return (
@@ -72,6 +84,26 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
+      }
+    }
+    allKontentItemBreakfast(filter: {elements: {keywords: {value: {in: "featured"}}}}) {
+      nodes {
+        elements {
+          name {
+            value
+          }
+          short_description {
+            value
+          }
+          hero_image {
+            value {
+              url
+            }
+          }
+          slug {
+            value
+          }
+        }
       }
     }
     allKontentItemBlogPost(sort: {fields: elements___published_date___value, order: DESC}) {

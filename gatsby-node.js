@@ -6,6 +6,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
+  const featurePage = path.resolve(`./src/templates/features-page.js`)
 
   // Get all markdown blog posts sorted by date
   const result = await graphql(
@@ -15,6 +16,18 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           nodes {
             elements {
               title {
+                value
+              }
+              slug {
+                value
+              }
+            }
+          }
+        }
+        allKontentItemBreakfast {
+          nodes {
+            elements {
+              name {
                 value
               }
               slug {
@@ -33,6 +46,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   }
 
   const posts = result.data.allKontentItemBlogPost.nodes
+  const features = result.data.allKontentItemBreakfast.nodes
+
+  console.log("Featured Pages", features)
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -50,6 +66,20 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           slug: post.elements.slug.value,
           previous,
           next,
+        },
+      })
+    })
+  }
+
+  // Create Features Page
+  if (features.length > 0) {
+    features.forEach((feature, index) => {
+
+      createPage({
+        path: feature.elements.slug.value,
+        component: featurePage,
+        context: {
+          slug: feature.elements.slug.value,
         },
       })
     })
